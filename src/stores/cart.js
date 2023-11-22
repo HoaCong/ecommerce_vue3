@@ -27,24 +27,41 @@ export const cartStore = defineStore("cart", {
       }
     },
 
-    async addToCart(params) {
+    async saveCart(params) {
       try {
         const response = await axios.post(
           "http://localhost:5000/carts",
           params
         );
-        if (response.data.status === 200) {
-          // this.carts = response.data.cart;
+        if (response.status === 200) {
+          Swal.fire({
+            icon: "success",
+            title: "Lưu giỏ hàng",
+            text: "Lưu giỏ hàng thành công",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          return true;
         } else {
-          // this.carts = [];
+          Swal.fire({
+            icon: "error",
+            title: "Lưu giỏ hàng",
+            text: "Lưu giỏ hàng thất bại",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          return false;
         }
       } catch (error) {
         console.error("Login error:", error);
-        // Swal.fire({
-        //   icon: "error",
-        //   title: "Đăng nhập thất bại",
-        //   text: "Xảy ra lỗi khi đăng nhập",
-        // });
+        Swal.fire({
+          icon: "error",
+          title: "Lưu giỏ hàng",
+          text: "Lưu giỏ hàng thất bại",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        return false;
       }
     },
   },

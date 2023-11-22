@@ -50,11 +50,25 @@ export const loginStore = defineStore("login", {
           params
         );
         this.isLoading = false;
-        if (response.data.status === 200) {
+        if (response.status === 200) {
           this.isSuccess = true;
+          Swal.fire({
+            icon: "success",
+            title: "Đăng ký thành công",
+            text: "Đã sẵn sàng để đăng nhập",
+            showConfirmButton: false,
+            timer: 1500,
+          });
           return true;
         } else {
           this.isFailure = true;
+          Swal.fire({
+            icon: "error",
+            title: "Đăng ký thất bại",
+            text: "Kiểm tra lại thông tin đăng ký",
+            showConfirmButton: false,
+            timer: 1500,
+          });
           return false;
         }
       } catch (error) {
@@ -63,6 +77,8 @@ export const loginStore = defineStore("login", {
           icon: "error",
           title: "Đăng ký thất bại",
           text: "Xảy ra lỗi khi đăng ký",
+          showConfirmButton: false,
+          timer: 1500,
         });
       }
     },

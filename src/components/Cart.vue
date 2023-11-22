@@ -37,8 +37,22 @@
                   </span>
                   <i @click="decrementQ(item)" class="bi bi-caret-down"></i>
                 </td>
-                <td>${{ item.price }}</td>
-                <td>${{ item.price * item.quantity }}</td>
+                <td>
+                  {{
+                    new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(item.price)
+                  }}
+                </td>
+                <td>
+                  {{
+                    new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(item.price * item.quantity)
+                  }}
+                </td>
                 <td>
                   <i
                     @click="removeFromCart(item)"
@@ -47,17 +61,31 @@
                 </td>
               </tr>
               <tr>
-                <th colSpan="3" class="text-center">Total</th>
-                <td colSpan="3" class="text-center">
+                <th colSpan="3" class="text-center align-middle">Total</th>
+                <td colSpan="3" class="text-center align-middle">
                   <span class="badge bg-danger rounded-pill">
-                    ${{
-                      cartItems.reduce(
-                        (acc, item) => (acc += item.price * item.quantity),
-                        0
+                    {{
+                      new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(
+                        cartItems.reduce(
+                          (acc, item) => (acc += item.price * item.quantity),
+                          0
+                        )
                       )
                     }}
                   </span>
                 </td>
+                <th
+                  v-if="countCartItems > 0"
+                  colSpan="3"
+                  class="text-center align-middle"
+                >
+                  <button @click="handleSaveCart" class="btn btn-primary">
+                    Lưu
+                  </button>
+                </th>
               </tr>
             </tbody>
           </table>
@@ -69,18 +97,38 @@
 
 <script>
 import { defineComponent } from "vue";
-import { mapState } from "pinia";
+import { mapState, mapActions, mapWritableState } from "pinia";
 import { productStore } from "../stores/product";
+import { cartStore } from "../stores/cart";
+import { loginStore } from "../stores/login";
+
 export default defineComponent({
   computed: {
+    ...mapState(loginStore, ["user"]),
     ...mapState(productStore, [
-      "cartItems",
       "countCartItems",
       "getCartItems",
       "incrementQ",
       "decrementQ",
       "removeFromCart",
     ]),
+    ...mapWritableState(productStore, ["cartItems"]),
+  },
+  methods: {
+    ...mapActions(cartStore, ["saveCart"]),
+    async handleSaveCart() {
+      const res = await this.saveCart({
+        username: this.user.username,
+        price: this.cartItems.reduce(
+          (acc, item) => (acc += item.price * item.quantity),
+          0
+        ),
+      });
+
+      if (res) {
+        this.cartItems = [];
+      }
+    },
   },
 });
 </script>
