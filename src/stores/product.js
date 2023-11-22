@@ -6,7 +6,16 @@ export const productStore = defineStore("product", {
     return {
       one: {},
       products: [],
+      cartItems: [],
     };
+  },
+  getters: {
+    countCartItems() {
+      return this.cartItems.length;
+    },
+    getCartItems() {
+      return this.cartItems;
+    },
   },
   actions: {
     async getList() {
@@ -19,12 +28,73 @@ export const productStore = defineStore("product", {
         }
       } catch (error) {
         console.error("Login error:", error);
-        // Swal.fire({
-        //   icon: "error",
-        //   title: "Đăng nhập thất bại",
-        //   text: "Xảy ra lỗi khi đăng nhập",
-        // });
       }
+    },
+    addToCart(item) {
+      let index = this.cartItems.findIndex((product) => product.id === item.id);
+      if (index !== -1) {
+        this.products[index].quantity += 1;
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your item has been updated",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        item.quantity = 1;
+        this.cartItems.push(item);
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your item has been saved",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    },
+    incrementQ(item) {
+      let index = this.cartItems.findIndex((product) => product.id === item.id);
+      if (index !== -1) {
+        this.cartItems[index].quantity += 1;
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your item has been updated",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    },
+    decrementQ(item) {
+      let index = this.cartItems.findIndex((product) => product.id === item.id);
+      if (index !== -1) {
+        this.cartItems[index].quantity -= 1;
+        if (this.cartItems[index].quantity === 0) {
+          this.cartItems = this.cartItems.filter(
+            (product) => product.id !== item.id
+          );
+        }
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your item has been updated",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    },
+    removeFromCart(item) {
+      this.cartItems = this.cartItems.filter(
+        (product) => product.id !== item.id
+      );
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Your item has been removed",
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
   },
 });

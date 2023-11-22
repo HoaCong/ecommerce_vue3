@@ -24,7 +24,9 @@
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/cart"
-              ><i class="bi bi-cart-check"></i> (0)</router-link
+              ><i class="bi bi-cart-check"></i> ({{
+                countCartItems
+              }})</router-link
             >
           </li>
           <li class="nav-item">
@@ -42,9 +44,12 @@
 import { defineComponent } from "vue";
 import { mapWritableState } from "pinia";
 import { loginStore } from "../stores/login";
+import { productStore } from "../stores/product";
+
 export default defineComponent({
   computed: {
     ...mapWritableState(loginStore, ["one", "user", "status"]),
+    ...mapWritableState(productStore, ["countCartItems"]),
   },
 
   methods: {

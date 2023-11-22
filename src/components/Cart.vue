@@ -16,7 +16,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in carts" :key="item.id">
+              <tr v-for="item in getCartItems" :key="item.id">
                 <td>{{ item.id }}</td>
                 <td>
                   <img
@@ -31,29 +31,31 @@
                   {{ item.name }}
                 </td>
                 <td>
-                  <i class="bi bi-caret-up"></i>
+                  <i @click="incrementQ(item)" class="bi bi-caret-up"></i>
                   <span class="mx-2">
                     {{ item.quantity }}
                   </span>
-                  <i class="bi bi-caret-down"></i>
+                  <i @click="decrementQ(item)" class="bi bi-caret-down"></i>
                 </td>
                 <td>${{ item.price }}</td>
                 <td>${{ item.price * item.quantity }}</td>
                 <td>
-                  <i class="bi bi-cart-x text-danger"></i>
+                  <i
+                    @click="removeFromCart(item)"
+                    class="bi bi-cart-x text-danger"
+                  ></i>
                 </td>
               </tr>
               <tr>
                 <th colSpan="3" class="text-center">Total</th>
                 <td colSpan="3" class="text-center">
                   <span class="badge bg-danger rounded-pill">
-                    <!-- ${{
-                      data.cartItems.reduce(
+                    ${{
+                      cartItems.reduce(
                         (acc, item) => (acc += item.price * item.quantity),
                         0
                       )
-                    }} -->
-                    0
+                    }}
                   </span>
                 </td>
               </tr>
@@ -67,17 +69,18 @@
 
 <script>
 import { defineComponent } from "vue";
-import { mapState, mapActions } from "pinia";
-import { cartStore } from "../stores/cart";
+import { mapState } from "pinia";
+import { productStore } from "../stores/product";
 export default defineComponent({
   computed: {
-    ...mapState(cartStore, ["carts"]),
-  },
-  created() {
-    this.getList();
-  },
-  methods: {
-    ...mapActions(cartStore, ["getList"]),
+    ...mapState(productStore, [
+      "cartItems",
+      "countCartItems",
+      "getCartItems",
+      "incrementQ",
+      "decrementQ",
+      "removeFromCart",
+    ]),
   },
 });
 </script>

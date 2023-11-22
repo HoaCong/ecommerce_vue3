@@ -18,7 +18,7 @@
           <h5 class="card-title">{{ product.name }}</h5>
 
           <div class="text-center">
-            <button @click="handleAddToCart(product)" class="btn btn-primary">
+            <button @click="addToCart(product)" class="btn btn-primary">
               <i class="bi bi-cart-check"></i> add to cart
             </button>
           </div>
@@ -32,7 +32,6 @@
 import { defineComponent } from "vue";
 import { mapState, mapActions } from "pinia";
 import { productStore } from "../stores/product";
-import { cartStore } from "../stores/cart";
 export default defineComponent({
   computed: {
     ...mapState(productStore, ["products"]),
@@ -41,17 +40,7 @@ export default defineComponent({
     this.getList();
   },
   methods: {
-    ...mapActions(productStore, ["getList"]),
-    ...mapActions(cartStore, ["addToCart"]),
-    handleAddToCart(data) {
-      this.addToCart({
-        username: "user",
-        summary: {
-          id: data,
-          price: data.price,
-        },
-      });
-    },
+    ...mapActions(productStore, ["getList", "addToCart"]),
   },
 });
 </script>
